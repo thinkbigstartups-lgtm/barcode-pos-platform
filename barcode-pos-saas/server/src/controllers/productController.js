@@ -57,3 +57,14 @@ export const deleteProduct = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+export const scanProduct = async (req, res) => {
+  try {
+    const { barcode } = req.body;
+    const product = await Product.findOne({ where: { barcode, tenantId: req.user.tenantId } });
+    if (!product) return res.status(404).json({ error: 'Product not found' });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

@@ -53,3 +53,15 @@ export const deleteSale = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+export const getSalesAnalytics = async (req, res) => {
+  try {
+    // Example: total sales and sales count for the tenant
+    const { Sale } = await import('../models/sale.js');
+    const sales = await Sale.findAll({ where: { tenantId: req.user.tenantId } });
+    const totalAmount = sales.reduce((sum, sale) => sum + parseFloat(sale.totalAmount), 0);
+    res.json({ totalSales: sales.length, totalAmount });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

@@ -34,6 +34,8 @@ export const updateInventory = async (req, res) => {
     const item = await Inventory.findOne({ where: { id: req.params.id } });
     if (!item) return res.status(404).json({ error: 'Inventory item not found' });
     await item.update(req.body);
+    // Emit real-time update
+    req.app.get('io').emit('inventory:update', { id: item.id, quantity: item.quantity });
     res.json(item);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -46,6 +48,16 @@ export const deleteInventory = async (req, res) => {
     if (!item) return res.status(404).json({ error: 'Inventory item not found' });
     await item.destroy();
     res.json({ message: 'Inventory item deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const getInventoryAlerts = async (req, res) => {
+  try {
+    const lowStockThreshold = 5;
+    const items = await Inventory.findAll({ where: { quantity: { [Inventory.sequelize.Op.lte]: lowStockThreshold } } });
+    res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

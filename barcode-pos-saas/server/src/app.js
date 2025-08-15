@@ -9,6 +9,8 @@ import inventoryRoutes from './routes/inventory.js';
 import saleRoutes from './routes/sale.js';
 import customerRoutes from './routes/customer.js';
 import tenantRoutes from './routes/tenant.js';
+import { createServer } from 'http';
+import { Server as SocketIOServer } from 'socket.io';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -27,8 +29,16 @@ app.use('/api/sales', saleRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/tenants', tenantRoutes);
 
+const server = createServer(app);
+const io = new SocketIOServer(server, { cors: { origin: '*' } });
+app.set('io', io);
+
+io.on('connection', (socket) => {
+  console.log('Socket.io client connected:', socket.id);
+});
+
 sequelize.sync().then(() => {
-    app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-    });
+  server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 });
