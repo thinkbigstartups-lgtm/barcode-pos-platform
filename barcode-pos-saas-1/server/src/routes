@@ -1,0 +1,42 @@
+const express = require('express');
+const router = express.Router();
+const { authenticate } = require('../middleware/auth');
+const productController = require('../controllers/productController');
+const inventoryController = require('../controllers/inventoryController');
+const salesController = require('../controllers/salesController');
+const customerController = require('../controllers/customerController');
+const tenantController = require('../controllers/tenantController');
+
+// Auth routes
+router.post('/auth/login', productController.login);
+router.post('/auth/register', productController.register);
+router.get('/auth/me', authenticate, productController.getMe);
+
+// Product routes
+router.get('/products', authenticate, productController.getAllProducts);
+router.post('/products', authenticate, productController.createProduct);
+router.put('/products/:id', authenticate, productController.updateProduct);
+router.delete('/products/:id', authenticate, productController.deleteProduct);
+router.post('/products/scan', authenticate, productController.scanProduct);
+
+// Inventory routes
+router.get('/inventory', authenticate, inventoryController.getInventory);
+router.post('/inventory', authenticate, inventoryController.addInventory);
+router.put('/inventory/:id', authenticate, inventoryController.updateInventory);
+router.get('/inventory/alerts', authenticate, inventoryController.getInventoryAlerts);
+
+// Sales routes
+router.post('/sales', authenticate, salesController.createSale);
+router.get('/sales/reports', authenticate, salesController.getSalesReports);
+router.get('/sales/analytics', authenticate, salesController.getSalesAnalytics);
+
+// Customer routes
+router.get('/customers', authenticate, customerController.getAllCustomers);
+router.post('/customers', authenticate, customerController.createCustomer);
+router.put('/customers/:id', authenticate, customerController.updateCustomer);
+
+// Tenant routes
+router.get('/tenants/branding', authenticate, tenantController.getTenantBranding);
+router.put('/tenants/branding', authenticate, tenantController.updateTenantBranding);
+
+module.exports = router;

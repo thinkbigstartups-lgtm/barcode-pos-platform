@@ -1,0 +1,162 @@
+// This file contains Sequelize models for the database, including User, Product, Category, Store, Sale, Inventory, Customer, and Tenant.
+
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../config/config').sequelize;
+
+// User Model
+class User extends Model {}
+User.init({
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    role: {
+        type: DataTypes.ENUM('admin', 'staff', 'cashier'),
+        allowNull: false
+    },
+    tenantId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    }
+}, { sequelize, modelName: 'user' });
+
+// Product Model
+class Product extends Model {}
+Product.init({
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    barcode: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    categoryId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+    },
+    stock: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    tenantId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    }
+}, { sequelize, modelName: 'product' });
+
+// Category Model
+class Category extends Model {}
+Category.init({
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    gstRate: {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false
+    },
+    tenantId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    }
+}, { sequelize, modelName: 'category' });
+
+// Store Model
+class Store extends Model {}
+Store.init({
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    location: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    tenantId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    }
+}, { sequelize, modelName: 'store' });
+
+// Sale Model
+class Sale extends Model {}
+Sale.init({
+    totalAmount: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+    },
+    tenantId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    }
+}, { sequelize, modelName: 'sale' });
+
+// Inventory Model
+class Inventory extends Model {}
+Inventory.init({
+    productId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    storeId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    }
+}, { sequelize, modelName: 'inventory' });
+
+// Customer Model
+class Customer extends Model {}
+Customer.init({
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    tenantId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    }
+}, { sequelize, modelName: 'customer' });
+
+// Tenant Model
+class Tenant extends Model {}
+Tenant.init({
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    branding: {
+        type: DataTypes.JSON,
+        allowNull: true
+    }
+}, { sequelize, modelName: 'tenant' });
+
+// Export models
+module.exports = {
+    User,
+    Product,
+    Category,
+    Store,
+    Sale,
+    Inventory,
+    Customer,
+    Tenant
+};
